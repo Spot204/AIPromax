@@ -1,9 +1,57 @@
 <script setup>
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { createAccount, logIn } from '../services/accountService.js'
 
 const container = ref(null)
 const registerButton = ref(null)
 const loginButton = ref(null)
+const username = ref('')
+const password = ref('')
+const username1 = ref('')
+const email = ref('')
+const password1 = ref('')
+const password2 = ref('')
+const router = useRouter();
+
+const handleLogin = async () => {
+    try {
+        const res = await logIn({
+            username: username.value,
+            password: password.value,
+        });
+
+        if (res.status === 200) {
+            router.push('/home');
+        }
+    } catch (err) {
+        alert('Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản hoặc mật khẩu.');
+
+    }
+}
+
+const handSignIn = async () => {
+    try {
+        if (password1.value !== password2.value) {
+            alert('Kiểm tra lại mật khẩu không trùng khớp.');
+        } else {
+            const res = await createAccount({
+                username: username1.value,
+                password: password1.value,
+                email: email.value,
+
+            })
+            if (res.status === 200) {
+                alert('Đăng ký tài khoản thành công.');
+                container.value.class.remove("right-panel-active");
+            }
+        }
+    }
+    catch (err) {
+        console.log(err)
+        alert('Không thể đăng ký tài khoản.')
+    }
+}
 
 onMounted(() => {
     registerButton.value?.addEventListener("click", () => {
@@ -14,7 +62,7 @@ onMounted(() => {
         container.value?.classList.remove("right-panel-active")
     })
 
-    console.log('Mounted xong, ref:', registerButton.value, loginButton.value, container.value)
+
 })
 
 </script>
@@ -22,21 +70,21 @@ onMounted(() => {
     <div id="form-login">
         <div class="container" ref="container">
             <div class="form-container register-container">
-                <form action="#">
+                <form action="#" @submit.prevent="handSignIn">
                     <h1>Đăng ký</h1>
-                    <input type="text" placeholder="Tên đăng nhập">
-                    <input type="email" placeholder="Email">
-                    <input type="password" placeholder="Mật khẩu">
-                    <input type="password" placeholder="Nhập lai mật khẩu">
+                    <input type="text" placeholder="Tên đăng nhập" v-model="username1">
+                    <input type="email" placeholder="Email" v-model="email">
+                    <input type="password" placeholder="Mật khẩu" v-model="password1">
+                    <input type="password" placeholder="Nhập lai mật khẩu" v-model="password2">
                     <button>Đăng ký</button>
                 </form>
             </div>
 
             <div class="form-container login-container">
-                <form action="#">
+                <form action="#" @submit.prevent="handleLogin">
                     <h1>Đăng nhập</h1>
-                    <input type="email" placeholder="Email">
-                    <input type="password" placeholder="Mật khẩu">
+                    <input type="text" placeholder="Tên đăng nhập" v-model="username">
+                    <input type="password" placeholder="Mật khẩu" v-model="password">
                     <button>Login</button>
                     <div class="content">
                         <div class="pass-link">

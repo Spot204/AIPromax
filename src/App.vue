@@ -1,15 +1,8 @@
 <script setup>
-import Login from './components/Login.vue';
-import Home from './components/Home.vue';
-import Home from './components/Home.vue';
-
 </script>
 
 <template>
-  
-  <Login />
-  <Home />
-
+  <router-view></router-view>
 </template>
 
 <style scoped>

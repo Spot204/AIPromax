@@ -6,6 +6,7 @@ import accountRouter from "./routers/accountRouter.js"
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
+app.use(cors("http://localhost:5173/"))
 
 app.use("/api", accountRouter);
 

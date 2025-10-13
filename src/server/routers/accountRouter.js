@@ -34,7 +34,7 @@ router.post("/createAccount", async (req, res) => {
 
           // Gọi controller để tạo tài khoản
           await accountController(username, newPassword, email, res, db);
-          return res.status(500).json({message: "Thành công"})
+          return res.status(500).json({ message: "Thành công" });
         } catch (error) {
           return res.status(500).json({ message: "Lỗi khi xử lý mật khẩu" });
         }
@@ -45,5 +45,31 @@ router.post("/createAccount", async (req, res) => {
     return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 });
+
+router.post("/logIn", async (req, res) => {
+    const { username, password } = req.body;
+    try {
+      db.get(
+        `SELECT * FROM users WHERE name = ?`,
+        [username],
+        async (err, row) => {
+          if (err) {
+            return res.status(500).json({ message: "Lỗi truy vấn database" });
+          }
+          if (!row) {
+            return res.status(401).json({ message: "Tài khoản không tồn tại" });
+          }
+          const match = bcrypt.compare(password, row.password);
+          if (match) {
+            return res.status(200).json({ message: "Đăng nhập thành công" });
+          } else {
+            return res.status(401).json({ message: "Sai mật khẩu" });
+          }
+        }
+      );
+    } catch (err) {
+      return res.status(500).json({ message: "Lỗi server", error });
+    }
+  });
 
 export default router;

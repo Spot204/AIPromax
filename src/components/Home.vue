@@ -1,10 +1,19 @@
 <script setup>
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 const container = ref(null);
 const Phantich = ref(null);
 const Lichsu = ref(null);
 const activeTab = ref('Phân tích');
 const activeBody = ref('link');
+const router = useRouter();
+
+function logOut(){
+    localStorage.removeItem('token');
+
+    router.push('/login');
+}
+
 onMounted(() => {
     const tabs = container.value.querySelectorAll('.tap-item');
     tabs.forEach(tab => {
@@ -31,7 +40,7 @@ const setActiveBody = (body) => {
     <div class="container" ref="container">
         <div class="head">
             <div>logo</div>
-            <div class="exit">Đăng xuất</div>
+            <div class="exit" @click="logOut">Đăng xuất</div>
         </div>
         <div class="body-container">
             <div class="body-menu">
