@@ -23,6 +23,8 @@ const handleLogin = async () => {
 
         if (res.status === 200) {
             router.push('/home');
+            username.value=""
+            password.value=""
         }
     } catch (err) {
         alert('Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản hoặc mật khẩu.');
@@ -43,12 +45,15 @@ const handSignIn = async () => {
             })
             if (res.status === 200) {
                 alert('Đăng ký tài khoản thành công.');
-                container.value.class.remove("right-panel-active");
+                container.value?.classList.remove("right-panel-active")
+                username1.value = ""
+                password1.value = ""
+                password2.value = ""
+                email.value = ""
             }
         }
     }
     catch (err) {
-        console.log(err)
         alert('Không thể đăng ký tài khoản.')
     }
 }
@@ -57,6 +62,8 @@ onMounted(() => {
     registerButton.value?.addEventListener("click", () => {
         container.value?.classList.add("right-panel-active")
     })
+
+
 
     loginButton.value?.addEventListener("click", () => {
         container.value?.classList.remove("right-panel-active")

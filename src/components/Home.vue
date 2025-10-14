@@ -126,13 +126,13 @@ const setActiveBody = (body) => {
 
         .active {
             background-color: white;
-            color: #4bb6b7;
+            color: #245657;
 
         }
 
         .tap-item:hover {
             background-color: #fff;
-            color: #4bb6b7;
+            color: #245657;
             transition: 0.3s ease-in-out;
         }
     }
@@ -152,7 +152,7 @@ const setActiveBody = (body) => {
     height: 92vh;
     display: flex;
     flex-direction: column;
-    background-color: #4bb6b7;
+    background-color: #245657;
     padding: 0 0 0 20px;
 
 }
@@ -176,7 +176,7 @@ const setActiveBody = (body) => {
 .head {
     width: 97%;
     height: 60px;
-    background-color: #4bb6b7;
+    background-color: #245657;
     color: white;
     display: flex;
     justify-content: space-between;
@@ -194,7 +194,7 @@ const setActiveBody = (body) => {
 
 .exit:hover {
     background-color: white;
-    color: #4bb6b7;
+    color: #245657;
     transition: 0.3s ease-in-out;
 }
 
@@ -218,16 +218,16 @@ const setActiveBody = (body) => {
     }
 
     p:hover {
-        color: #4bb6b7;
+        color: #245657;
         transition: 0.3s ease-in-out;
     }
 }
 
 button {
     position: relative;
-    border-radius: 20px;
-    border: 1px solid #4bb6b7;
-    background-color: #4bb6b7;
+    border-radius: 10px;
+    border: 1px solid #245657;
+    background-color: #245657;
     color: #fff;
     font-size: 15px;
     font-weight: 700;
@@ -239,9 +239,6 @@ button {
     cursor: pointer;
 }
 
-button:hover {
-    letter-spacing: 3px;
-}
 
 button:active {
     transform: scale(0.95);
@@ -253,8 +250,8 @@ button:focus {
 
 button.active {
     background-color: #fff;
-    color: #4bb6b7;
-    border: 2px solid #4bb6b7;
+    color: #245657;
+    border: 2px solid #245657;
 }
 
 input {

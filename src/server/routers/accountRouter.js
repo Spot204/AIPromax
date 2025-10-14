@@ -34,7 +34,7 @@ router.post("/createAccount", async (req, res) => {
 
           // Gọi controller để tạo tài khoản
           await accountController(username, newPassword, email, res, db);
-          return res.status(500).json({ message: "Thành công" });
+          return res.status(200).json({ message: "Thành công" });
         } catch (error) {
           return res.status(500).json({ message: "Lỗi khi xử lý mật khẩu" });
         }
