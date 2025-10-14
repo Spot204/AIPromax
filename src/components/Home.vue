@@ -98,7 +98,7 @@ const setActiveBody = (body) => {
         </div>
     </div>
 </template>
-<style lang="scss" scoped>
+<style  scoped>
 * {
     font-family: 'Poppins', sans-serif;
 }

@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+import sys, io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='ignore')
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='ignore')
 import requests
 from bs4 import BeautifulSoup
 
@@ -44,7 +48,9 @@ def fetch_data(page):
         })
     
     return results
-for page in range(1, 200):  # Lấy dữ liệu từ trang 1 đến 200
+for page in range(1, 6):  # Lấy dữ liệu từ trang 1 đến 200
     data = fetch_data(page)
     for entry in data:
         print(entry)
+
+
