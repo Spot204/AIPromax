@@ -34,7 +34,7 @@ def main():
     except:
         pass
 
-    cmd = [sys.executable, r"D:\AIPROMAX\AIPromax\AIPromax\src\Py-CrawData\CrawData.py"]
+    cmd = [sys.executable, r"C:\Code\vscode\html\AIPromax\src\Py-CrawData\CrawData.py"]
     # proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     proc = subprocess.Popen(
     cmd,
