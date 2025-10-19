@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { createAccount, logIn } from '../services/accountService.js'
+import axios from "axios";
 
 const container = ref(null)
 const registerButton = ref(null)

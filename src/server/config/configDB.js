@@ -15,61 +15,70 @@ const connectDB = () => {
     }
   });
 
+
+
+  // Tạo bảng users
   db.run(
     `
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      email TEXT NOT NULL ,
-      password TEXT NOT NULL
+      username VARCHAR(255) NOT NULL,
+      password VARCHAR(255) NOT NULL,
+      email VARCHAR(255)
     )
-  `,
+    `,
     (err) => {
       if (err) {
         console.error("❌ Không thể tạo bảng users:", err.message);
       } else {
-        console.log("✅ Bảng users đã tồn tại hoặc được tạo thành công");
+        console.log("✅ Bảng users đã được tạo lại");
       }
     }
   );
+
+  // Tạo bảng analysis_history_sdt
   db.run(
     `
-    CREATE TABLE IF NOT EXISTS historysdt (
-      id INTEGER PRIMATY KEY AUTOINCREMENT,
+    CREATE TABLE IF NOT EXISTS analysis_history_sdt (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
-      sdt varchar(255) NOT NULL,
-      opinion TEXT NOT NULL,
-      description TEXT NOT NULL,
-      creadted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      sdt VARCHAR(255),
+      opinion NVARCHAR(255),
+      description NVARCHAR(255),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (user_id) REFERENCES users(id)
     )
     `,
     (err) => {
       if (err) {
-        console.error("❌ Không thể tạo bảng historysdt:", err.message);
+        console.error("❌ Không thể tạo bảng analysis_history_sdt:", err.message);
       } else {
-        console.log("✅ Bảng historysdt đã tồn tại hoặc được tạo thành công");
+        console.log("✅ Bảng analysis_history_sdt đã được tạo lại");
       }
     }
   );
+
+  // Tạo bảng analysis_history_url
   db.run(
     `
-    CREATE TABLE IF NOT EXISTS historyurl (
-    id INTEGER PRIMATY KEY AUTOINCREMENT,
+    CREATE TABLE IF NOT EXISTS analysis_history_url (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
-      sdt varchar(255) NOT NULL,
-      url TEXT NOT NULL,
-      creadted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      url VARCHAR(255),
+      analysis_result NVARCHAR(255),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (user_id) REFERENCES users(id)
-    )`,
+    )
+    `,
     (err) => {
       if (err) {
-        console.error("❌ Không thể tạo bảng historyurl:", err.message);
+        console.error("❌ Không thể tạo bảng analysis_history_url:", err.message);
       } else {
-        console.log("✅ Bảng historyurl đã tồn tại hoặc được tạo thành công");
+        console.log("✅ Bảng analysis_history_url đã được tạo lại");
       }
     }
   );
+
   return db;
 };
 
