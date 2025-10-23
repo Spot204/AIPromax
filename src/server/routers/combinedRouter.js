@@ -114,4 +114,62 @@ router.post("/comfirm", async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 });
+// api lấy danh sách theo user_id
+router.get("/list", async (req, res) => {
+  const { user_id } = req.query; // hoặc req.body nếu bạn dùng POST
+
+  if (!user_id) {
+    return res.status(400).json({ message: "Thiếu user_id" });
+  }
+
+  try {
+    db.all(
+      `SELECT * FROM analysis_history WHERE user_id = ? ORDER BY created_at DESC`,
+      [user_id],
+      (err, rows) => {
+        if (err) {
+          console.error("❌ Lỗi truy vấn database:", err.message);
+          return res.status(500).json({ message: "Lỗi truy vấn database" });
+        }
+        // Nếu không có dữ liệu thật → trả dữ liệu demo
+        if (!rows || rows.length === 0) {
+          const demoData = [
+            {
+              id: 0,
+              user_id: user_id,
+              data: "https://example.com",
+              opinion: "benign",
+              description: "Trang web an toàn, không phát hiện mã độc.",
+              created_at: new Date().toISOString(),
+            },
+            {
+              id: 1,
+              user_id: user_id,
+              data: "http://malicious-site.xyz",
+              opinion: "malicious",
+              description: "Trang web bị nghi ngờ lừa đảo hoặc chứa mã độc.",
+              created_at: new Date(Date.now() - 3600000).toISOString(),
+            },
+          ];
+          return res.status(200).json({
+            message: "Không có dữ liệu thật, trả về danh sách demo",
+            count: demoData.length,
+            data: demoData,
+          });
+        }
+
+        // Có dữ liệu thật
+        return res.status(200).json({
+          message: "Lấy danh sách thành công",
+          count: rows.length,
+          data: rows,
+        });
+      }
+    );
+  } catch (error) {
+    console.error("❌ Lỗi hệ thống:", error.message);
+    return res.status(500).json({ message: "Lỗi hệ thống", error: error.message });
+  }
+});
+
 export default router;
