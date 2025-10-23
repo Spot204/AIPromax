@@ -39,7 +39,7 @@ const connectDB = () => {
   // Tạo bảng analysis_history_sdt
   db.run(
     `
-    CREATE TABLE IF NOT EXISTS analysis_history_sdt (
+    CREATE TABLE IF NOT EXISTS analysis_history(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
       sdt VARCHAR(255),
@@ -57,28 +57,6 @@ const connectDB = () => {
       }
     }
   );
-
-  // Tạo bảng analysis_history_url
-  db.run(
-    `
-    CREATE TABLE IF NOT EXISTS analysis_history_url (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER NOT NULL,
-      url VARCHAR(255),
-      analysis_result NVARCHAR(255),
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (user_id) REFERENCES users(id)
-    )
-    `,
-    (err) => {
-      if (err) {
-        console.error("❌ Không thể tạo bảng analysis_history_url:", err.message);
-      } else {
-        console.log("✅ Bảng analysis_history_url đã được tạo lại");
-      }
-    }
-  );
-
   return db;
 };
 
