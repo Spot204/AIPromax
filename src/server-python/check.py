@@ -15,18 +15,18 @@ def predict_url_with_temperature(tokenizer, model,url_text, temperature=5.0):  #
     benign_w, mal_w = probs[0], probs[1]
 
     # Bước 4: In ra kết quả
-    print(f"\n🔍 URL: {url_text}")
-    print(f"➡️ Trọng số hiệu chỉnh (T={temperature}): [Benign={benign_w:.6f}, Malicious={mal_w:.6f}]")
+    print(f"\n URL: {url_text}")
+    print(f" Trọng số hiệu chỉnh (T={temperature}): [Benign={benign_w:.6f}, Malicious={mal_w:.6f}]")
 
     # Phân cấp mức độ
     if mal_w <= 0.3:
-        level = "🟢 Bình thường"
+        level = " Bình thường"
     elif mal_w <= 0.5:
-        level = "🟡 Nghi ngờ nhẹ"
+        level = " Nghi ngờ nhẹ"
     elif mal_w <= 0.8:
-        level = "🟠 Nguy cơ cao"
+        level = " Nguy cơ cao"
     else:
-        level = "🔴 Rất độc hại"
+        level = " Rất độc hại"
 
-    print(f"📊 Mức độ: {level}")
+    print(f" Mức độ: {level}")
     return level
