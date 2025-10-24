@@ -82,23 +82,33 @@ router.post("/comfirmData", async (req, res) => {
   }
   try {
     const datacomfirm = check(data);
+    console.log(datacomfirm);
+    console.log(data);
     if (datacomfirm.type === "url") {
-      const reponse = await axios.post("http://localhost:5000/api/checklink", {
-        url: data,
-      });
-      const result = reponse.data;
-      const created_at = new Date();
-      await createComfirm(db, id_user, url, result, created_at);
-      return res.status(200).json({ message: "Xác nhận link thành công" });
-    } else if (datacomfirm.type === "phone") {
       const reponse = await axios.post(
-        `http://localhost:5000/api/lookup/<${data}>`,
-        url
+        "http://localhost:5000/api/checklink",
+        {
+          data: data,
+        }
       );
-      const { analysis_result } = reponse.data;
       const created_at = new Date();
-      await createComfirm(db, id_user, sdt, analysis_result, created_at);
-      return res.status(200).json({ message: "Xác nhận link thành công" });
+      const { opinion, description, mal_w } = reponse.data;
+      await createComfirm(db, id_user, data, opinion, description, created_at);
+      res.status(200).json({
+        message: "Xác nhận link thành công",
+        opinion,
+        description,
+      });
+    } else if (datacomfirm.type === "phone") {
+      const reponse = await axios.get(
+        `http://localhost:5000/api/lookup/<${data}>`
+      );
+    const { opinion, description, mal_w } = reponse.data;
+      const created_at = new Date();
+      await createComfirm(db, id_user, data, opinion, description, created_at);
+      return res
+        .status(200)
+        .json({ message: "Xác nhận sdt thành công", opinion, description });
     } else {
       return res.status(400).json({ message: "Dữ liệu không hợp lệ" });
     }

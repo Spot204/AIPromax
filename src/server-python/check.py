@@ -43,4 +43,4 @@ def predict_url_with_temperature(tokenizer, model, url_text, temperature=5.0):
             "Tuyệt đối không mở hoặc chia sẻ đường dẫn này."
         )
 
-    return opinion, description, mal_w
+    return opinion, description, float(mal_w)

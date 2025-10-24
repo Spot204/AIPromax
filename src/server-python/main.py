@@ -13,11 +13,11 @@ model, tokenizer = connect_model()
 def check_link():
     try:
         data = request.get_json()
-        url = data.get('url')  # dùng .get để tránh lỗi nếu 'url' không tồn tại
+        url = data.get('data')  # dùng .get để tránh lỗi nếu 'url' không tồn tại
         opinion, description, mal_w = predict_url_with_temperature(tokenizer, model, url, temperature=4.5)
         return jsonify({'opinion': opinion,
                         'description':description,
-                         'mal_w' : mal_w}), 200
+                         'mal_w' : float(mal_w)}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
