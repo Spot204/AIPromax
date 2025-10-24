@@ -3,7 +3,8 @@ import bcrypt from "bcryptjs";
 import accountController from "../controllers/accountController.js";
 import connectDB from "../config/configDB.js";
 import axios from "axios";
-import { createComfirmLink, createComfirmSdt } from "../models/comfirmModel.js";
+import { createComfirm } from "../models/comfirmModel.js";
+import { check } from "../fuction/check.js";
 
 const db = connectDB();
 const router = express.Router();
@@ -74,44 +75,38 @@ router.post("/logIn", async (req, res) => {
   }
 });
 
-router.post("/comfirmLink", async (req, res) => {
+router.post("/comfirmData", async (req, res) => {
   const { data, id_user } = req.body;
   if (!data || !id_user) {
     return res.status(400).json({ message: "Vui lòng nhập đầy đủ thông tin" });
   }
   try {
-    // if(){}
-    // else{}
-
-    const reponse = await axios.post(
-      "http://localhost:5000/api/checklink",
-      {url: url}
-    );
-    console.log("hewsdf");
-    const result = reponse.data;
-    const created_at = new Date();
-    await createComfirmLink(db, id_user, url, result, created_at);
-    return res.status(200).json({ message: "Xác nhận link thành công" });
+    const datacomfirm = check(data);
+    if (datacomfirm.type === "url") {
+      const reponse = await axios.post("http://localhost:5000/api/checklink", {
+        url: data,
+      });
+      const result = reponse.data;
+      const created_at = new Date();
+      await createComfirm(db, id_user, url, result, created_at);
+      return res.status(200).json({ message: "Xác nhận link thành công" });
+    } else if (datacomfirm.type === "phone") {
+      const reponse = await axios.post(
+        `http://localhost:5000/api/lookup/<${data}>`,
+        url
+      );
+      const { analysis_result } = reponse.data;
+      const created_at = new Date();
+      await createComfirm(db, id_user, sdt, analysis_result, created_at);
+      return res.status(200).json({ message: "Xác nhận link thành công" });
+    } else {
+      return res.status(400).json({ message: "Dữ liệu không hợp lệ" });
+    }
   } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-});
-router.post("/comfirm", async (req, res) => {
-  const { sdt, id_user } = req.body.url;
-  if (!sdt || !id_user) {
-    return res.status(400).json({ message: "Vui lòng nhập đầy đủ thông tin" });
-  }
-  try {
-    const reponse = await axios.post(
-      `http://localhost:5000/api/lookup/<${sdt}>`,
-      url
-    );
-    const { analysis_result } = reponse.data;
-    const created_at = new Date();
-    await createComfirmSdt(db, id_user, sdt, analysis_result, created_at);
-    return res.status(200).json({ message: "Xác nhận link thành công" });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
+    console.error("❌ Lỗi hệ thống:", error.message);
+    return res
+      .status(500)
+      .json({ message: "Lỗi hệ thống", error: error.message });
   }
 });
 // api lấy danh sách theo user_id
@@ -168,7 +163,9 @@ router.get("/list", async (req, res) => {
     );
   } catch (error) {
     console.error("❌ Lỗi hệ thống:", error.message);
-    return res.status(500).json({ message: "Lỗi hệ thống", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Lỗi hệ thống", error: error.message });
   }
 });
 

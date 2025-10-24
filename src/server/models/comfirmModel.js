@@ -1,8 +1,8 @@
-export const createComfirmSdt = async (db, user_id, sdt, opinion, created_at) => {
+export const createComfirm = async (db, user_id, data, opinion, description, created_at) => {
   return new Promise((resolve, reject) => {
     db.run(
-      `INSERT INTO analysis_history_sdt (user_id, sdt, opinion, created_at) VALUES (?, ?, ?, ?)`,
-      [user_id, sdt, opinion, created_at],
+      `INSERT INTO analysis_history (user_id, data, opinion, description, created_at) VALUES (?, ?, ?, ?, ?)`,
+      [user_id, data, opinion, description, created_at],
       function (err) {
         if (err) {
           return reject(err);
@@ -13,20 +13,3 @@ export const createComfirmSdt = async (db, user_id, sdt, opinion, created_at) =>
     );
   });
 };
-
-export const createComfirmLink = async (db, user_id, url, analysis_result, created_at) => {
-  return new Promise((resolve, reject) => {
-    db.run(
-      `INSERT INTO analysis_history_url (user_id, url, analysis_result, created_at) VALUES (?, ?, ?, ?)`,
-      [user_id, url, analysis_result, created_at],
-      function (err) {
-        if (err) {
-          return reject(err);
-        } else {
-          resolve({ id: this.lastID });
-        }
-      }
-    );
-  });
-};
-
