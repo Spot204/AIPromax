@@ -42,7 +42,7 @@ const connectDB = () => {
     CREATE TABLE IF NOT EXISTS analysis_history(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
-      sdt VARCHAR(255),
+      data VARCHAR(255),
       opinion NVARCHAR(255),
       description NVARCHAR(255),
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
