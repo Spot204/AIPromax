@@ -17,18 +17,18 @@ const connectDB = () => {
 
   // Dùng serialize để đảm bảo thứ tự chạy lệnh
   db.serialize(() => {
-    // 🧹 Xóa 2 bảng cụ thể
-    db.run(`DROP TABLE IF EXISTS analysis_history_url`, (err) => {
-      if (err)
-        console.error("❌ Lỗi khi xóa bảng analysis_history_url:", err.message);
-      else console.log("🗑️ Đã xóa bảng analysis_history_url (nếu tồn tại)");
-    });
+    // // 🧹 Xóa 2 bảng cụ thể
+    // db.run(`DROP TABLE IF EXISTS analysis_history_url`, (err) => {
+    //   if (err)
+    //     console.error("❌ Lỗi khi xóa bảng analysis_history_url:", err.message);
+    //   else console.log("🗑️ Đã xóa bảng analysis_history_url (nếu tồn tại)");
+    // });
 
-    db.run(`DROP TABLE IF EXISTS analysis_history_sdt`, (err) => {
-      if (err)
-        console.error("❌ Lỗi khi xóa bảng analysis_history_sdt:", err.message);
-      else console.log("🗑️ Đã xóa bảng analysis_history_sdt (nếu tồn tại)");
-    });
+    // db.run(`DROP TABLE IF EXISTS analysis_history_sdt`, (err) => {
+    //   if (err)
+    //     console.error("❌ Lỗi khi xóa bảng analysis_history_sdt:", err.message);
+    //   else console.log("🗑️ Đã xóa bảng analysis_history_sdt (nếu tồn tại)");
+    // });
 
     // 🧱 Tạo bảng users
     db.run(
@@ -43,7 +43,7 @@ const connectDB = () => {
       (err) => {
         if (err)
           console.error("❌ Không thể tạo bảng users:", err.message);
-        else console.log("✅ Bảng users đã được tạo lại");
+        else console.log("✅ Bảng users đã tồn tại or được tạo lại");
       }
     );
 
@@ -63,7 +63,7 @@ const connectDB = () => {
       (err) => {
         if (err)
           console.error("❌ Không thể tạo bảng analysis_history:", err.message);
-        else console.log("✅ Bảng analysis_history đã được tạo lại");
+        else console.log("✅ Bảng analysis_history đã tồn tại ôr được tạo lại");
       }
     );
   });

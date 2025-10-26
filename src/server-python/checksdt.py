@@ -37,5 +37,5 @@ def fetch_data(phone_number):
         return {
             "phone": phone_number,
             "opinion": "An toàn",  # Default value in case of error
-            "description": "Chưa có báo cáo"  # Default value in case of error
+            "description": "Chưa có báo cáo về số điện thoại này"  # Default value in case of error
         }

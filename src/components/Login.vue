@@ -25,6 +25,7 @@ const handleLogin = async () => {
         if (res.status === 200) {
             const user_id = res.data.user_id;
             localStorage.setItem('user_id', user_id);
+            console.log("User ID lưu vào localStorage:", user_id);
             alert('Đăng nhập thành công.');
             router.push('/home');
             username.value = ""

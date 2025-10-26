@@ -1,6 +1,5 @@
 import express, { application } from 'express';
 import cors from 'cors';
-import reportRouter from "./CreateReport/report.routes.js";
 import combineRouter from "./routers/combinedRouter.js"
 
 
@@ -10,7 +9,7 @@ app.use(express.json());
 app.use(cors("http://localhost:5173/"))
 
 app.use("/api", combineRouter);
-app.use("/api/report", reportRouter);
+
 
 
 

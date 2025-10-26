@@ -5,9 +5,14 @@ import connectDB from "../config/configDB.js";
 import axios from "axios";
 import { createComfirm } from "../models/comfirmModel.js";
 import { check } from "../fuction/check.js";
-
+import { generatePDF } from "../CreateReport/report.routes.js";
 const db = connectDB();
 const router = express.Router();
+
+// =============================
+// Tích hợp router xuất báo cáo
+// =============================
+// router.use("/report", reportRouter); // ✅ Đường dẫn: /api/report/pdf
 
 router.post("/createAccount", async (req, res) => {
   const { username, password, email } = req.body;
@@ -153,6 +158,53 @@ router.post("/list", async (req, res) => {
     return res
       .status(500)
       .json({ message: "Lỗi hệ thống", error: error.message });
+  }
+});
+// API xuất PDF báo cáo
+router.post("/report/pdf", async (req, res) => {
+  const { user_id } = req.body;
+  console.log("📄 Xuất PDF cho user_id:", user_id);
+
+  if (!user_id) {
+    return res.status(400).json({ message: "Thiếu user_id" });
+  }
+
+  // ⚙️ Thiết lập header PDF CHUẨN
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Disposition", `attachment; filename=report_user_${user_id}.pdf`);
+  res.status(200); // 🔥 Bắt buộc để tránh lỗi Axios 204
+
+  try {
+    // Lấy dữ liệu người dùng hiện tại
+    db.all(
+      `SELECT data AS input, opinion AS status, description AS note 
+       FROM analysis_history 
+       WHERE user_id = ? 
+       ORDER BY created_at DESC`,
+      [user_id],
+      async (err, rows) => {
+        if (err) {
+          console.error("❌ Lỗi truy vấn database:", err.message);
+          return res.status(500).end("Lỗi truy vấn database");
+        }
+
+        const demoData = [
+          { input: "https://example.com", status: "An toàn", note: "Không phát hiện mối nguy" },
+          { input: "0912345678", status: "Nghi ngờ", note: "Nhiều phản ánh spam" },
+        ];
+
+        const finalData = rows.length > 0 ? rows : demoData;
+
+        // Gọi hàm sinh PDF
+        import("../CreateReport/report.routes.js").then(async (mod) => {
+          const { generatePDF } = mod;
+          await generatePDF(res, finalData);
+        });
+      }
+    );
+  } catch (error) {
+    console.error("❌ Lỗi khi tạo PDF:", error);
+    res.status(500).end("Lỗi khi tạo báo cáo PDF");
   }
 });
 
