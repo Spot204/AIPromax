@@ -69,10 +69,13 @@ router.post("/logIn", async (req, res) => {
         }
         const match = bcrypt.compare(password, row.password);
         if (match) {
-          return res.status(200).json({ message: "Đăng nhập thành công" ,
-          user_id: row.id,
-          username: row.name
-          });
+          return res
+            .status(200)
+            .json({
+              message: "Đăng nhập thành công",
+              user_id: row.id,
+              username: row.name,
+            });
         } else {
           return res.status(401).json({ message: "Sai mật khẩu" });
         }
@@ -91,12 +94,9 @@ router.post("/comfirmData", async (req, res) => {
   try {
     const datacomfirm = check(data);
     if (datacomfirm.type === "url") {
-      const reponse = await axios.post(
-        "http://localhost:5000/api/checklink",
-        {
-          data: data,
-        }
-      );
+      const reponse = await axios.post("http://localhost:5000/api/checklink", {
+        data: data,
+      });
       const created_at = new Date().toDateString();
       const { opinion, description, mal_w } = reponse.data;
       await createComfirm(db, user_id, data, opinion, description, created_at);
@@ -106,20 +106,32 @@ router.post("/comfirmData", async (req, res) => {
         description,
         mal_w,
         data,
-        created_at
+        created_at,
       });
     } else if (datacomfirm.type === "phone") {
       const reponse = await axios.get(
         `http://localhost:5000/api/lookup/<${data}>`
       );
-    const { opinion, description } = reponse.data;
+      const { opinion, description } = reponse.data;
       const created_at = new Date().toDateString();
       if (opinion)
-
-      await createComfirm(db, user_id, data, opinion, description, created_at);
+        await createComfirm(
+          db,
+          user_id,
+          data,
+          opinion,
+          description,
+          created_at
+        );
       return res
         .status(200)
-        .json({ message: "Xác nhận sdt thành công", opinion, description });
+        .json({
+          message: "Xác nhận sdt thành công",
+          opinion,
+          description,
+          data,
+          created_at,
+        });
     } else {
       return res.status(400).json({ message: "Dữ liệu không hợp lệ" });
     }
@@ -133,21 +145,19 @@ router.post("/comfirmData", async (req, res) => {
 // api lấy danh sách theo user_id
 router.post("/list", async (req, res) => {
   const { user_id } = req.body; // hoặc req.body nếu bạn dùng POST
- console.log(user_id);
   if (!user_id) {
     return res.status(400).json({ message: "Thiếu user_id" });
   }
-
   try {
     db.all(
-      `SELECT * FROM analysis_history WHERE user_id = ? ORDER BY created_at DESC`,
+      `SELECT * FROM analysis_history WHERE user_id = ?`,
       [user_id],
       (err, rows) => {
         if (err) {
           console.error("❌ Lỗi truy vấn database:", err.message);
           return res.status(500).json({ message: "Lỗi truy vấn database" });
         }
-        // Có dữ liệu thật
+        console.log("thanhcong");
         return res.status(200).json({
           message: "Lấy danh sách thành công",
           count: rows.length,
@@ -173,7 +183,10 @@ router.post("/report/pdf", async (req, res) => {
 
   // ⚙️ Thiết lập header PDF CHUẨN
   res.setHeader("Content-Type", "application/pdf");
-  res.setHeader("Content-Disposition", `attachment; filename=report_user_${user_id}.pdf`);
+  res.setHeader(
+    "Content-Disposition",
+    `attachment; filename=report_user_${user_id}.pdf`
+  );
   res.status(200); // 🔥 Bắt buộc để tránh lỗi Axios 204
 
   try {
@@ -191,8 +204,16 @@ router.post("/report/pdf", async (req, res) => {
         }
 
         const demoData = [
-          { input: "https://example.com", status: "An toàn", note: "Không phát hiện mối nguy" },
-          { input: "0912345678", status: "Nghi ngờ", note: "Nhiều phản ánh spam" },
+          {
+            input: "https://example.com",
+            status: "An toàn",
+            note: "Không phát hiện mối nguy",
+          },
+          {
+            input: "0912345678",
+            status: "Nghi ngờ",
+            note: "Nhiều phản ánh spam",
+          },
         ];
 
         const finalData = rows.length > 0 ? rows : demoData;
