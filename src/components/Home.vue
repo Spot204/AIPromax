@@ -1,29 +1,63 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { checkService, getListService } from '../services/checkService';
 
 const router = useRouter();
-const historyList = ref([
-    {
-        id: 1,
-        input: 'https://example.com',
-        status: 'An toàn',
-        time: '23/10/2025 15:30',
-        note: 'Không phát hiện mối nguy'
-    },
-    {
-        id: 2, 
-        input: 'https://suspicious.com',
-        status: 'Nguy hiểm',
-        time: '23/10/2025 14:20',
-        note: 'Phát hiện mã độc'
-    }
-]);
+const historyList = ref({});
+const dataInput = ref('');
+const result = ref({
+    mal_w: 0,
+    data: '',
+    opinion: '',
+    description: '',
+    create_at: '',
+});
+function point(mal_w) {
+    const score = Math.max(0, 100 - mal_w * 10);
+    return score.toFixed(2);
+}
 
 function logOut() {
     localStorage.removeItem('token');
     router.push('/login');
 }
+
+const submitCheck = async () => {
+    try {
+        const userId = localStorage.getItem('user_id');
+        if (!userId) return alert('Bạn chưa đăng nhập');
+        const response = await checkService({
+            data: dataInput.value,
+            user_id: userId,
+        });
+
+        result.value = {
+            mal_w: point(response.data.mal_w),
+            data: response.data.data,
+            opinion: response.data.opinion,
+            description: response.data.description,
+            create_at: response.data.created_at
+        };
+        console.log(result.value);
+        await fetchHistory();
+    } catch (error) {
+        alert('Lỗi khi kiểm tra link:', error);
+    }
+};
+
+async function fetchHistory() {
+    try {
+        const user_id = localStorage.getItem('user_id');
+        const response = await getListService({ user_id: user_id });
+        historyList.value = response.data.data;
+    } catch (error) {
+        alert('Lỗi khi lấy lịch sử kiểm tra:', error);
+    }
+}
+onMounted(() => {
+    fetchHistory();
+});
 </script>
 
 <template>
@@ -39,10 +73,9 @@ function logOut() {
                         <h3>Kiểm tra link độc hại</h3>
                         <p>Bạn nhập đường link nghi ngờ vào phần bên dưới</p>
                         <div class="check-item">
-                            <input type="text" placeholder="Nhập link cần kiểm tra" />
-                            <button>Kiểm tra</button>
+                            <input type="text" placeholder="Nhập link cần kiểm tra" v-model="dataInput" />
+                            <button @click="submitCheck">Kiểm tra</button>
                         </div>
-
                         <div class="result">
                             <!-- Phần phân tích -->
                             <div class="analysis">
@@ -50,16 +83,17 @@ function logOut() {
                                 <div class="analysis-content">
                                     <div class="score">
                                         <div class="score-label">Điểm an toàn</div>
-                                        <div class="score-value">85/100</div>
+                                        <div class="score-value">{{ result.mal_w }}</div>
                                     </div>
                                     <div class="details">
-                                        <p><strong>URL:</strong> https://example.com</p>
-                                        <p><strong>Trạng thái:</strong> <span class="safe">An toàn</span></p>
-                                        <p><strong>Thời gian quét:</strong> 0.5 giây</p>
+                                        <p><strong>URL:</strong> {{ result.data }}</p>
+                                        <p><strong>Trạng thái:</strong> <span class="safe">{{ result.opinion }}</span>
+                                        </p>
+                                        <P><strong>Ghi chú: </strong> {{ result.description }}</P>
+                                        <p><strong>Thời gian quét:</strong> {{ result.create_at }}</p>
                                     </div>
                                 </div>
                             </div>
-
                             <!-- Phần lịch sử -->
                             <div class="history">
                                 <h4>Lịch sử kiểm tra</h4>
@@ -74,13 +108,14 @@ function logOut() {
                                     </thead>
                                     <tbody>
                                         <tr v-for="item in historyList" :key="item.id">
-                                            <td>{{ item.input }}</td>
+                                            <td>{{ item.data }}</td>
                                             <td>
-                                                <span :class="item.status === 'An toàn' ? 'safe' : 'danger'">
-                                                    {{ item.status }}
+                                                <span :class="item.opinion === 'Bình thường' ? 'safe' : 'danger'">
+                                                    {{ item.opinion }}
                                                 </span>
                                             </td>
-                                            <td>{{ item.time }}</td>
+                                            <td>{{ new Date(1761400058964).toISOString()
+}}</td>
                                             <td>{{ item.note }}</td>
                                         </tr>
                                     </tbody>
@@ -118,9 +153,10 @@ function logOut() {
     justify-content: space-between;
     align-items: center;
     font-size: 20px;
-    div{
-        margin: 0 20px;
-    }
+}
+
+.head div {
+    margin: 0 20px;
 }
 
 .body-container {
@@ -149,14 +185,15 @@ function logOut() {
 }
 
 .check h3 {
-    margin:10px;
+    margin: 10px;
 }
 
 .check p {
-    margin:15px;
+    margin: 15px;
     color: #666;
 }
-.check input{
+
+.check input {
     margin-left: 15px;
 }
 
@@ -251,7 +288,8 @@ table {
     margin-top: 20px;
 }
 
-th, td {
+th,
+td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;

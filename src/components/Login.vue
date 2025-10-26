@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { createAccount, logIn } from '../services/accountService.js'
-import axios from "axios";
+
 
 const container = ref(null)
 const registerButton = ref(null)
@@ -23,9 +23,13 @@ const handleLogin = async () => {
         });
 
         if (res.status === 200) {
+            const user_id = res.data.user_id;
+            localStorage.setItem('user_id', user_id);
+            alert('Đăng nhập thành công.');
             router.push('/home');
-            username.value=""
-            password.value=""
+            username.value = ""
+            password.value = ""
+
         }
     } catch (err) {
         alert('Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản hoặc mật khẩu.');
@@ -42,7 +46,6 @@ const handSignIn = async () => {
                 username: username1.value,
                 password: password1.value,
                 email: email.value,
-
             })
             if (res.status === 200) {
                 alert('Đăng ký tài khoản thành công.');
