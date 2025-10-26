@@ -14,7 +14,7 @@ const result = ref({
     create_at: '',
 });
 function point(mal_w) {
-    const score = Math.max(0, 100 - mal_w * 10);
+    const score = Math.max(0, 100 - mal_w * 100);
     return score.toFixed(2);
 }
 
@@ -31,7 +31,6 @@ const submitCheck = async () => {
             data: dataInput.value,
             user_id: userId,
         });
-
         result.value = {
             mal_w: point(response.data.mal_w),
             data: response.data.data,
@@ -39,12 +38,28 @@ const submitCheck = async () => {
             description: response.data.description,
             create_at: response.data.created_at
         };
-        console.log(result.value);
         await fetchHistory();
+        alert('Kiểm tra link thành công!');
+        if (response.message !== 'undefined') {
+            alert(response.message);
+        }
     } catch (error) {
         alert('Lỗi khi kiểm tra link:', error);
     }
 };
+
+function setColor(opinion) {
+    if (!opinion) return '';
+    if (opinion === 'Bình thường' || opinion === 'An toàn' || opinion >= 70) return 'safe';
+    if (opinion == 'Không ý kiến' || opinion >= 40) return 'nomal';
+    return 'danger';
+}
+
+function setColorFromScore(score) {
+    if (score >= 70) return 'score-value-safe';
+    if (score >= 40) return 'score-value-nomal';
+    return 'score-value-danger';
+}
 
 async function fetchHistory() {
     try {
@@ -83,11 +98,12 @@ onMounted(() => {
                                 <div class="analysis-content">
                                     <div class="score">
                                         <div class="score-label">Điểm an toàn</div>
-                                        <div class="score-value">{{ result.mal_w }}</div>
+                                        <div :class="setColorFromScore(result.mal_w)">{{ result.mal_w }}</div>
                                     </div>
                                     <div class="details">
                                         <p><strong>URL:</strong> {{ result.data }}</p>
-                                        <p><strong>Trạng thái:</strong> <span class="safe">{{ result.opinion }}</span>
+                                        <p><strong>Trạng thái:</strong> <span :class="setColor(result.mal_w)">{{
+                                            result.opinion }}</span>
                                         </p>
                                         <P><strong>Ghi chú: </strong> {{ result.description }}</P>
                                         <p><strong>Thời gian quét:</strong> {{ result.create_at }}</p>
@@ -110,12 +126,11 @@ onMounted(() => {
                                         <tr v-for="item in historyList" :key="item.id">
                                             <td>{{ item.data }}</td>
                                             <td>
-                                                <span :class="item.opinion === 'Bình thường' ? 'safe' : 'danger'">
+                                                <span :class="setColor(item.opinion)">
                                                     {{ item.opinion }}
                                                 </span>
                                             </td>
-                                            <td>{{ new Date(1761400058964).toISOString()
-}}</td>
+                                            <td>{{ new Date(1761400058964).toISOString() }}</td>
                                             <td>{{ item.note }}</td>
                                         </tr>
                                     </tbody>
@@ -271,10 +286,24 @@ input {
     width: 150px;
 }
 
-.score-value {
+.score-value-safe {
     font-size: 24px;
     font-weight: bold;
     color: #2e7d32;
+    margin-top: 10px;
+}
+
+.score-value-nomal {
+    font-size: 24px;
+    font-weight: bold;
+    color: #f9a825;
+    margin-top: 10px;
+}
+
+.score-value-danger {
+    font-size: 24px;
+    font-weight: bold;
+    color: #d32f2f;
     margin-top: 10px;
 }
 

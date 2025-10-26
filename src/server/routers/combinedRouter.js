@@ -107,8 +107,10 @@ router.post("/comfirmData", async (req, res) => {
       const reponse = await axios.get(
         `http://localhost:5000/api/lookup/<${data}>`
       );
-    const { opinion, description, mal_w } = reponse.data;
+    const { opinion, description } = reponse.data;
       const created_at = new Date().toDateString();
+      if (opinion)
+
       await createComfirm(db, user_id, data, opinion, description, created_at);
       return res
         .status(200)
